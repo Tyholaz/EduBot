@@ -2,7 +2,7 @@
 <html lang="uk">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>AI Teacher Веб-Чат</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
@@ -25,10 +25,15 @@
         body {
             background-color: var(--background-color);
             height: 100vh;
-            display: flex;
-            flex-direction: column;
-            justify-content: center; /* Центруємо по вертикалі */
-            align-items: center; /* Центруємо по горизонталі */
+            width: 100%;
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* Запобігає прокрутці всієї сторінки */
+            position: fixed; /* Фіксована позиція для всього вмісту */
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
         }
 
         .bg-image {
@@ -41,14 +46,14 @@
         }
 
         .chat-container {
-            max-width: 600px;
             width: 100%;
-            margin: 0 auto;
+            height: 100vh;
+            margin: 0;
             display: flex;
             flex-direction: column;
-            height: 100vh; /* Стандартно для десктопу */
-            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
             background-color: rgba(240, 240, 240, 0.8);
+            overflow: hidden; /* Щоб заокруглення працювало */
+            position: relative;
         }
 
         .header {
@@ -59,6 +64,7 @@
             align-items: center;
             height: 60px;
             z-index: 5;
+            width: 100%;
         }
 
         .avatar {
@@ -88,6 +94,8 @@
             display: flex;
             flex-direction: column;
             gap: 10px;
+            width: 100%;
+            height: calc(100vh - 120px); /* Висота екрану мінус висота header та input-area */
         }
 
         .message-container {
@@ -142,6 +150,9 @@
             align-items: center;
             height: 60px;
             z-index: 5;
+            width: 100%;
+            position: relative;
+            bottom: 0;
         }
 
         #message-input {
@@ -271,15 +282,13 @@
         /* Мобільна адаптація */
         @media (max-width: 480px) {
             body {
-                padding: 15px 0; /* Додаємо відступи зверху і знизу */
+                padding: 0; /* Прибираємо відступи */
             }
             
             .chat-container {
-                height: 90vh; /* Обмежуємо висоту на мобільних пристроях */
-                max-height: 800px; /* Максимальна висота */
-                width: 95%; /* Трохи зменшуємо ширину, щоб були видні краї */
-                border-radius: 15px; /* Додаємо заокруглення */
-                overflow: hidden; /* Щоб заокруглення працювало */
+                height: 100vh; /* Повна висота екрану */
+                width: 100%; /* Повна ширина екрану */
+                border-radius: 0; /* Прибираємо заокруглення для мобільних */
             }
 
             .bubble-container {
@@ -307,16 +316,14 @@
 
         /* Для планшетів */
         @media (min-width: 481px) and (max-width: 768px) {
-            .chat-container {
-                height: 90vh;
-                max-height: 900px;
-                width: 90%;
-                border-radius: 15px;
-                overflow: hidden;
+            body {
+                padding: 0;
             }
             
-            body {
-                padding: 20px 0;
+            .chat-container {
+                height: 100vh;
+                width: 100%;
+                border-radius: 0;
             }
         }
     </style>
@@ -387,7 +394,6 @@
             </div>
         </div>
     </div>
-
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Основні елементи DOM
