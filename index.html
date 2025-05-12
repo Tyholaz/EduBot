@@ -28,8 +28,8 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Запобігає прокрутці всієї сторінки */
-            position: fixed; /* Фіксована позиція для всього вмісту */
+            overflow: hidden;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -52,7 +52,7 @@
             display: flex;
             flex-direction: column;
             background-color: rgba(240, 240, 240, 0.8);
-            overflow: hidden; /* Щоб заокруглення працювало */
+            overflow: hidden;
             position: relative;
         }
 
@@ -95,7 +95,7 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            height: calc(100vh - 120px); /* Висота екрану мінус висота header та input-area */
+            height: calc(100vh - 120px);
         }
 
         .message-container {
@@ -206,7 +206,7 @@
             opacity: 1;
         }
 
-        /* Стилі для модального вікна налаштувань */
+        /* Стилі для модального вікна */
         .modal {
             display: none;
             position: fixed;
@@ -236,20 +236,6 @@
         .close {
             cursor: pointer;
             font-size: 22px;
-        }
-
-        .settings-item {
-            margin-bottom: 15px;
-        }
-
-        .settings-item button {
-            width: 100%;
-            padding: 8px;
-            background-color: var(--header-color);
-            color: white;
-            border: none;
-            border-radius: 5px;
-            cursor: pointer;
         }
 
         /* Стилі для спливаючого меню */
@@ -282,13 +268,13 @@
         /* Мобільна адаптація */
         @media (max-width: 480px) {
             body {
-                padding: 0; /* Прибираємо відступи */
+                padding: 0;
             }
             
             .chat-container {
-                height: 100vh; /* Повна висота екрану */
-                width: 100%; /* Повна ширина екрану */
-                border-radius: 0; /* Прибираємо заокруглення для мобільних */
+                height: 100vh;
+                width: 100%;
+                border-radius: 0;
             }
 
             .bubble-container {
@@ -342,9 +328,6 @@
 
         <!-- Випадаюче меню -->
         <div class="dropdown-menu" id="dropdown-menu">
-            <div class="dropdown-item" id="change-name">Змінити ім'я вчителя</div>
-            <div class="dropdown-divider"></div>
-            <div class="dropdown-item" id="reset-settings">Скинути ім'я</div>
             <div class="dropdown-item" id="clear-chat">Очистити чат</div>
             <div class="dropdown-item" id="about">Про програму</div>
         </div>
@@ -379,21 +362,6 @@
         </div>
     </div>
 
-    <!-- Модальне вікно для зміни імені -->
-    <div class="modal" id="name-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Змінити ім'я вчителя</h3>
-                <span class="close">&times;</span>
-            </div>
-            <div class="settings-item">
-                <input type="text" id="teacher-name-input" placeholder="Введіть нове ім'я" value="Вчитель">
-            </div>
-            <div class="settings-item">
-                <button id="save-name">Зберегти</button>
-            </div>
-        </div>
-    </div>
     <script>
         document.addEventListener('DOMContentLoaded', function () {
             // Основні елементи DOM
@@ -406,15 +374,12 @@
 
             // Модальні вікна
             const aboutModal = document.getElementById('about-modal');
-            const nameModal = document.getElementById('name-modal');
 
             // Кнопки меню
-            const changeName = document.getElementById('change-name');
-            const resetSettings = document.getElementById('reset-settings');
             const clearChat = document.getElementById('clear-chat');
             const aboutBtn = document.getElementById('about');
 
-            // Налаштування з фіксованими аватарами
+            // Налаштування з фіксованим ім'ям та аватарами
             let settings = {
                 teacherName: "Вчитель",
                 teacherAvatar: "teacher.png", // Фіксований аватар вчителя
@@ -428,10 +393,7 @@
             // Прапорець для відстеження стану відповіді вчителя
             let teacherIsResponding = false;
 
-            // Завантаження збережених налаштувань
-            loadSettings();
-
-            // Системний промпт для AI - використовуємо точно такий як в Python коді
+            // Системний промпт для AI
             const systemPrompt = "Ти — досвідчений вчитель 28-ї школи чоловічого роду. Ти завжди відповідаєш виключно українською мовою, дотримуючись правил граматики, орфографії та стилістики. Твої пояснення чіткі, зрозумілі та адаптовані для учнів різного рівня підготовки. Твоя головна мета — навчати, допомагати засвоювати матеріал та розвивати критичне мислення в учнів. Ти використовуєш приклади, щоб краще пояснити складні теми, і уникаєш неформальної лексики. Відповідати стараєшся швидше та довго думати тільки на навчальних питаннях.";
 
             // API URL для OpenRouter
@@ -469,7 +431,6 @@
             document.querySelectorAll('.close').forEach(function (closeBtn) {
                 closeBtn.addEventListener('click', function () {
                     aboutModal.style.display = 'none';
-                    nameModal.style.display = 'none';
                 });
             });
 
@@ -478,59 +439,14 @@
                 if (event.target === aboutModal) {
                     aboutModal.style.display = 'none';
                 }
-                if (event.target === nameModal) {
-                    nameModal.style.display = 'none';
-                }
             });
 
             // Обробники для кнопок спливаючого меню
-            changeName.addEventListener('click', function () {
-                document.getElementById('teacher-name-input').value = settings.teacherName;
-                nameModal.style.display = 'block';
-                dropdownMenu.style.display = 'none';
-            });
-
-            document.getElementById('save-name').addEventListener('click', function () {
-                const newName = document.getElementById('teacher-name-input').value.trim();
-                if (newName) {
-                    const oldName = settings.teacherName;
-                    settings.teacherName = newName;
-                    teacherHeader.textContent = `${newName} AI`;
-                    saveSettings();
-
-                    // Оновлюємо імена в повідомленнях
-                    updateMessageNames(oldName, newName);
-                    nameModal.style.display = 'none';
-
-                    // Повідомлення про успіх
-                    alert("Ім'я вчителя змінено успішно!");
-                }
-            });
-
             clearChat.addEventListener('click', function () {
                 if (confirm("Ви впевнені, що хочете очистити чат?")) {
                     chatMessages.innerHTML = '';
                     addMessage(settings.teacherName, "Чат очищено. Як я можу вам допомогти?", "teacher");
                     lastSender = settings.teacherName;
-                    dropdownMenu.style.display = 'none';
-                }
-            });
-
-            resetSettings.addEventListener('click', function () {
-                if (confirm("Ви впевнені, що хочете скинути ім'я до значення за замовчуванням?")) {
-                    const oldName = settings.teacherName;
-
-                    // Скидаємо ім'я
-                    settings.teacherName = "Вчитель";
-
-                    // Оновлюємо інтерфейс
-                    teacherHeader.textContent = "Вчитель AI";
-
-                    // Оновлюємо імена в повідомленнях
-                    updateMessageNames(oldName, settings.teacherName);
-                    saveSettings();
-
-                    alert("Ім'я скинуто до значення за замовчуванням.");
                     dropdownMenu.style.display = 'none';
                 }
             });
@@ -677,16 +593,6 @@
                 chatMessages.scrollTop = chatMessages.scrollHeight;
             }
 
-            // Функція для оновлення імен відправників в повідомленнях
-            function updateMessageNames(oldName, newName) {
-                const senderNames = document.querySelectorAll('.teacher .sender-name');
-                senderNames.forEach(nameElement => {
-                    if (nameElement.textContent === oldName) {
-                        nameElement.textContent = newName;
-                    }
-                });
-            }
-
             // Функція для показу індикатора набору
             function showTypingIndicator() {
                 const typingContainer = document.createElement('div');
@@ -787,21 +693,6 @@
 
                 // Запускаємо анімацію
                 activateDot();
-            }
-
-            // Функції для роботи з localStorage
-            function saveSettings() {
-                localStorage.setItem('chatAppSettings', JSON.stringify(settings));
-            }
-
-            function loadSettings() {
-                const savedSettings = localStorage.getItem('chatAppSettings');
-                if (savedSettings) {
-                    const parsedSettings = JSON.parse(savedSettings);
-                    // Зберігаємо лише ім'я вчителя, аватари фіксовані
-                    settings.teacherName = parsedSettings.teacherName || "Вчитель";
-                    teacherHeader.textContent = `${settings.teacherName} AI`;
-                }
             }
         });
     </script>
