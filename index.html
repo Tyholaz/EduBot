@@ -8,6 +8,7 @@
     <style>
         :root {
             --header-color: #455A64;
+            --footer-color: #455A64;
             --teacher-bubble-color: #B3E5FC;
             --user-bubble-color: #C8E6C9;
             --background-color: #F0F0F0;
@@ -20,6 +21,7 @@
             padding: 0;
             box-sizing: border-box;
             font-family: Arial, sans-serif;
+            -webkit-tap-highlight-color: transparent;
         }
 
         body {
@@ -28,8 +30,8 @@
             width: 100%;
             margin: 0;
             padding: 0;
-            overflow: hidden; /* Запобігає прокрутці всієї сторінки */
-            position: fixed; /* Фіксована позиція для всього вмісту */
+            overflow: hidden;
+            position: fixed;
             top: 0;
             left: 0;
             right: 0;
@@ -48,11 +50,9 @@
         .chat-container {
             width: 100%;
             height: 100vh;
-            margin: 0;
             display: flex;
             flex-direction: column;
             background-color: rgba(240, 240, 240, 0.8);
-            overflow: hidden; /* Щоб заокруглення працювало */
             position: relative;
         }
 
@@ -65,6 +65,9 @@
             height: 60px;
             z-index: 5;
             width: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
         }
 
         .avatar {
@@ -95,7 +98,10 @@
             flex-direction: column;
             gap: 10px;
             width: 100%;
-            height: calc(100vh - 120px); /* Висота екрану мінус висота header та input-area */
+            height: calc(100% - 120px);
+            margin-top: 60px;
+            margin-bottom: 60px;
+            -webkit-overflow-scrolling: touch;
         }
 
         .message-container {
@@ -104,13 +110,21 @@
             align-items: flex-start;
         }
 
+        .message-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-right: 10px;
+            object-fit: cover;
+        }
+
         .bubble-container {
             max-width: 70%;
             margin: 0 10px;
         }
 
         .bubble {
-            padding: 12px;
+            padding: 12px 16px;
             border-radius: 18px;
             position: relative;
             word-wrap: break-word;
@@ -125,9 +139,9 @@
         }
 
         .sender-name {
-            font-size: 10px;
+            font-size: 12px;
             font-weight: bold;
-            margin-bottom: 5px;
+            margin-bottom: 4px;
         }
 
         .teacher .sender-name {
@@ -139,20 +153,21 @@
         }
 
         .message-text {
-            font-size: 14px;
+            font-size: 16px;
             line-height: 1.4;
         }
 
         .input-area {
-            background-color: var(--header-color);
+            background-color: var(--footer-color);
             padding: 10px 15px;
             display: flex;
             align-items: center;
             height: 60px;
             z-index: 5;
             width: 100%;
-            position: relative;
+            position: absolute;
             bottom: 0;
+            left: 0;
         }
 
         #message-input {
@@ -161,7 +176,8 @@
             border: none;
             border-radius: 20px;
             margin-right: 10px;
-            font-size: 14px;
+            font-size: 16px;
+            height: 40px;
         }
 
         #message-input:focus {
@@ -174,6 +190,11 @@
             color: white;
             font-size: 24px;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            width: 40px;
+            height: 40px;
         }
 
         .typing-indicator {
@@ -282,13 +303,13 @@
         /* Мобільна адаптація */
         @media (max-width: 480px) {
             body {
-                padding: 0; /* Прибираємо відступи */
+                padding: 0;
             }
             
             .chat-container {
-                height: 100vh; /* Повна висота екрану */
-                width: 100%; /* Повна ширина екрану */
-                border-radius: 0; /* Прибираємо заокруглення для мобільних */
+                height: 100vh;
+                width: 100%;
+                border-radius: 0;
             }
 
             .bubble-container {
@@ -303,28 +324,6 @@
             .header-title {
                 font-size: 16px;
             }
-
-            #message-input {
-                font-size: 14px;
-                padding: 8px 12px;
-            }
-
-            .message-text {
-                font-size: 13px;
-            }
-        }
-
-        /* Для планшетів */
-        @media (min-width: 481px) and (max-width: 768px) {
-            body {
-                padding: 0;
-            }
-            
-            .chat-container {
-                height: 100vh;
-                width: 100%;
-                border-radius: 0;
-            }
         }
     </style>
 </head>
@@ -337,7 +336,7 @@
         <div class="header">
             <img src="teacher.png" alt="Вчитель" class="avatar" id="teacher-avatar">
             <div class="header-title">Вчитель AI</div>
-            <div class="menu-button" id="menu-button">•••</div>
+            <div class="menu-button" id="menu-button">⋮</div>
         </div>
 
         <!-- Випадаюче меню -->
@@ -351,7 +350,17 @@
 
         <!-- Область повідомлень -->
         <div class="chat-messages" id="chat-messages">
-            <!-- Повідомлення будуть додаватися JavaScript -->
+            <!-- Приклад повідомлення від вчителя -->
+            <div class="message-container teacher">
+                <img src="teacher.png" alt="Вчитель" class="message-avatar">
+                <div class="bubble-container">
+                    <div class="sender-name">Вчитель</div>
+                    <div class="bubble">
+                        <div class="message-text">Доброго дня, я ваш вчитель. Як можу допомогти вам сьогодні?</div>
+                    </div>
+                </div>
+            </div>
+            <!-- Інші повідомлення будуть додаватися JavaScript -->
         </div>
 
         <!-- Поле введення -->
@@ -394,415 +403,202 @@
             </div>
         </div>
     </div>
+
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Основні елементи DOM
-            const chatMessages = document.getElementById('chat-messages');
+        document.addEventListener('DOMContentLoaded', function() {
+            // Отримання елементів DOM
             const messageInput = document.getElementById('message-input');
             const sendButton = document.getElementById('send-button');
+            const chatMessages = document.getElementById('chat-messages');
             const menuButton = document.getElementById('menu-button');
             const dropdownMenu = document.getElementById('dropdown-menu');
-            const teacherHeader = document.querySelector('.header-title');
-
-            // Модальні вікна
             const aboutModal = document.getElementById('about-modal');
             const nameModal = document.getElementById('name-modal');
-
-            // Кнопки меню
-            const changeName = document.getElementById('change-name');
-            const resetSettings = document.getElementById('reset-settings');
-            const clearChat = document.getElementById('clear-chat');
-            const aboutBtn = document.getElementById('about');
-
-            // Налаштування з фіксованими аватарами
-            let settings = {
-                teacherName: "Вчитель",
-                teacherAvatar: "teacher.png", // Фіксований аватар вчителя
-                userAvatar: "user.png", // Фіксований аватар користувача
-                apiKey: "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"
-            };
-
-            // Останній відправник повідомлення
-            let lastSender = null;
-
-            // Прапорець для відстеження стану відповіді вчителя
-            let teacherIsResponding = false;
-
-            // Завантаження збережених налаштувань
-            loadSettings();
-
-            // Системний промпт для AI - використовуємо точно такий як в Python коді
-            const systemPrompt = "Ти — досвідчений вчитель 28-ї школи чоловічого роду. Ти завжди відповідаєш виключно українською мовою, дотримуючись правил граматики, орфографії та стилістики. Твої пояснення чіткі, зрозумілі та адаптовані для учнів різного рівня підготовки. Твоя головна мета — навчати, допомагати засвоювати матеріал та розвивати критичне мислення в учнів. Ти використовуєш приклади, щоб краще пояснити складні теми, і уникаєш неформальної лексики. Відповідати стараєшся швидше та довго думати тільки на навчальних питаннях.";
-
-            // API URL для OpenRouter
-            const apiUrl = "https://openrouter.ai/api/v1/chat/completions";
-
-            // Додаємо початкове повідомлення від вчителя
-            addMessage(settings.teacherName, "Доброго дня, я ваш вчитель. Як можу допомогти вам сьогодні?", "teacher");
-            lastSender = settings.teacherName;
-
-            // Обробники подій
+            const closeButtons = document.querySelectorAll('.close');
+            const saveNameButton = document.getElementById('save-name');
+            const changeNameButton = document.getElementById('change-name');
+            const resetSettingsButton = document.getElementById('reset-settings');
+            const clearChatButton = document.getElementById('clear-chat');
+            const aboutButton = document.getElementById('about');
+            const teacherNameInput = document.getElementById('teacher-name-input');
+            
+            // Стан додатка
+            let teacherName = localStorage.getItem('teacherName') || "Вчитель";
+            
+            // Інціалізація
+            function init() {
+                // Відновлення імені вчителя
+                if (localStorage.getItem('teacherName')) {
+                    teacherName = localStorage.getItem('teacherName');
+                    updateTeacherName();
+                }
+                
+                // Відновлення історії чату
+                const chatHistory = localStorage.getItem('chatHistory');
+                if (chatHistory) {
+                    chatMessages.innerHTML = chatHistory;
+                    scrollToBottom();
+                }
+            }
+            
+            // Функція для збереження історії чату
+            function saveChatHistory() {
+                localStorage.setItem('chatHistory', chatMessages.innerHTML);
+            }
+            
+            // Прокрутка до останнього повідомлення
+            function scrollToBottom() {
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }
+            
+            // Функція для додавання повідомлення в чат
+            function addMessage(text, isUser = false) {
+                const messageContainer = document.createElement('div');
+                messageContainer.className = `message-container ${isUser ? 'user' : 'teacher'}`;
+                
+                const avatar = document.createElement('img');
+                avatar.className = 'message-avatar';
+                avatar.src = isUser ? 'user.png' : 'teacher.png';
+                avatar.alt = isUser ? 'Користувач' : 'Вчитель';
+                
+                const bubbleContainer = document.createElement('div');
+                bubbleContainer.className = 'bubble-container';
+                
+                const senderName = document.createElement('div');
+                senderName.className = 'sender-name';
+                senderName.textContent = isUser ? 'Ви' : teacherName;
+                
+                const bubble = document.createElement('div');
+                bubble.className = 'bubble';
+                
+                const messageText = document.createElement('div');
+                messageText.className = 'message-text';
+                messageText.textContent = text;
+                
+                bubble.appendChild(messageText);
+                bubbleContainer.appendChild(senderName);
+                bubbleContainer.appendChild(bubble);
+                
+                messageContainer.appendChild(avatar);
+                messageContainer.appendChild(bubbleContainer);
+                
+                chatMessages.appendChild(messageContainer);
+                saveChatHistory();
+                scrollToBottom();
+            }
+            
+            // Функція для надсилання повідомлення
+            function sendMessage() {
+                const text = messageInput.value.trim();
+                if (text === '') return;
+                
+                addMessage(text, true);
+                messageInput.value = '';
+                
+                // Симуляція відповіді вчителя
+                setTimeout(() => {
+                    const response = getAIResponse(text);
+                    addMessage(response, false);
+                }, 1000);
+            }
+            
+            // Проста функція AI відповіді (для демонстрації)
+            function getAIResponse(text) {
+                const responses = [
+                    "Це цікаве запитання. Давайте розберемо його детальніше.",
+                    "Я можу допомогти вам з цим. Що саме вас цікавить?",
+                    "Згідно з шкільною програмою, ця тема вивчається в такому контексті...",
+                    "Це важлива концепція. Спробую пояснити простими словами.",
+                    "Я бачу, що вас цікавить ця тема. Ось деякі факти, які можуть бути корисними..."
+                ];
+                
+                return responses[Math.floor(Math.random() * responses.length)];
+            }
+            
+            // Оновлення імені вчителя
+            function updateTeacherName() {
+                document.querySelector('.header-title').textContent = teacherName + " AI";
+                
+                // Оновлення імені в повідомленнях
+                const teacherNameElements = document.querySelectorAll('.teacher .sender-name');
+                teacherNameElements.forEach(el => {
+                    el.textContent = teacherName;
+                });
+                
+                localStorage.setItem('teacherName', teacherName);
+            }
+            
+            // Події
             sendButton.addEventListener('click', sendMessage);
-            messageInput.addEventListener('keypress', function (e) {
+            
+            messageInput.addEventListener('keypress', function(e) {
                 if (e.key === 'Enter') {
                     sendMessage();
                 }
             });
-
-            // Обробник для кнопки меню
-            menuButton.addEventListener('click', function () {
-                if (dropdownMenu.style.display === 'block') {
-                    dropdownMenu.style.display = 'none';
-                } else {
-                    dropdownMenu.style.display = 'block';
-                }
+            
+            menuButton.addEventListener('click', function() {
+                dropdownMenu.style.display = dropdownMenu.style.display === 'block' ? 'none' : 'block';
             });
-
-            // При кліку поза меню, ховаємо його
-            document.addEventListener('click', function (event) {
-                if (!menuButton.contains(event.target) && !dropdownMenu.contains(event.target)) {
+            
+            document.addEventListener('click', function(e) {
+                if (!menuButton.contains(e.target) && !dropdownMenu.contains(e.target)) {
                     dropdownMenu.style.display = 'none';
                 }
             });
-
-            // Елементи закриття для модальних вікон
-            document.querySelectorAll('.close').forEach(function (closeBtn) {
-                closeBtn.addEventListener('click', function () {
-                    aboutModal.style.display = 'none';
-                    nameModal.style.display = 'none';
-                });
-            });
-
-            // Кліки за межами модальних вікон
-            window.addEventListener('click', function (event) {
-                if (event.target === aboutModal) {
-                    aboutModal.style.display = 'none';
-                }
-                if (event.target === nameModal) {
-                    nameModal.style.display = 'none';
-                }
-            });
-
-            // Обробники для кнопок спливаючого меню
-            changeName.addEventListener('click', function () {
-                document.getElementById('teacher-name-input').value = settings.teacherName;
-                nameModal.style.display = 'block';
-                dropdownMenu.style.display = 'none';
-            });
-
-            document.getElementById('save-name').addEventListener('click', function () {
-                const newName = document.getElementById('teacher-name-input').value.trim();
-                if (newName) {
-                    const oldName = settings.teacherName;
-                    settings.teacherName = newName;
-                    teacherHeader.textContent = `${newName} AI`;
-                    saveSettings();
-
-                    // Оновлюємо імена в повідомленнях
-                    updateMessageNames(oldName, newName);
-                    nameModal.style.display = 'none';
-
-                    // Повідомлення про успіх
-                    alert("Ім'я вчителя змінено успішно!");
-                }
-            });
-
-            clearChat.addEventListener('click', function () {
-                if (confirm("Ви впевнені, що хочете очистити чат?")) {
-                    chatMessages.innerHTML = '';
-                    addMessage(settings.teacherName, "Чат очищено. Як я можу вам допомогти?", "teacher");
-                    lastSender = settings.teacherName;
-                    dropdownMenu.style.display = 'none';
-                }
-            });
-
-            resetSettings.addEventListener('click', function () {
-                if (confirm("Ви впевнені, що хочете скинути ім'я до значення за замовчуванням?")) {
-                    const oldName = settings.teacherName;
-
-                    // Скидаємо ім'я
-                    settings.teacherName = "Вчитель";
-
-                    // Оновлюємо інтерфейс
-                    teacherHeader.textContent = "Вчитель AI";
-
-                    // Оновлюємо імена в повідомленнях
-                    updateMessageNames(oldName, settings.teacherName);
-                    saveSettings();
-
-                    alert("Ім'я скинуто до значення за замовчуванням.");
-                    dropdownMenu.style.display = 'none';
-                }
-            });
-
-            aboutBtn.addEventListener('click', function () {
+            
+            aboutButton.addEventListener('click', function() {
                 aboutModal.style.display = 'block';
                 dropdownMenu.style.display = 'none';
             });
-
-            // Функція для відправки повідомлення
-            function sendMessage() {
-                const userInput = messageInput.value.trim();
-
-                if (!userInput || teacherIsResponding) {
-                    return;
+            
+            changeNameButton.addEventListener('click', function() {
+                nameModal.style.display = 'block';
+                teacherNameInput.value = teacherName;
+                dropdownMenu.style.display = 'none';
+            });
+            
+            saveNameButton.addEventListener('click', function() {
+                const newName = teacherNameInput.value.trim();
+                if (newName) {
+                    teacherName = newName;
+                    updateTeacherName();
                 }
-
-                // Очищаємо поле вводу
-                messageInput.value = '';
-
-                // Блокуємо відправку повідомлень
-                teacherIsResponding = true;
-                messageInput.disabled = true;
-                sendButton.disabled = true;
-
-                // Додаємо повідомлення користувача до чату
-                const isNewSender = (lastSender !== "Ви");
-                addMessage("Ви", userInput, "user", isNewSender);
-                lastSender = "Ви";
-
-                // Показуємо індикатор набору
-                showTypingIndicator();
-
-                // Викликаємо API для отримання відповіді
-                getAIResponse(userInput);
-            }
-
-            // Функція для отримання відповіді від AI через API
-            function getAIResponse(userInput) {
-                // Використовуємо fetch для запиту до API
-                fetch(apiUrl, {
-                    method: 'POST',
-                    headers: {
-                        'Authorization': `Bearer ${settings.apiKey}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        model: "microsoft/mai-ds-r1:free",
-                        messages: [
-                            { role: "system", content: systemPrompt },
-                            { role: "user", content: userInput }
-                        ]
-                    })
-                })
-                    .then(response => {
-                        if (!response.ok) {
-                            throw new Error(`Помилка API: ${response.status} ${response.statusText}`);
-                        }
-                        return response.json();
-                    })
-                    .then(data => {
-                        // Видаляємо індикатор набору
-                        removeTypingIndicator();
-
-                        // Отримуємо відповідь від AI
-                        let aiResponse = "На жаль, виникла помилка при отриманні відповіді. Спробуйте пізніше.";
-
-                        if (data.choices && data.choices.length > 0) {
-                            aiResponse = data.choices[0].message.content;
-                        }
-
-                        // Додаємо відповідь від вчителя
-                        const isNewSender = (lastSender !== settings.teacherName);
-                        addMessage(settings.teacherName, aiResponse, "teacher", isNewSender);
-                        lastSender = settings.teacherName;
-
-                        // Розблоковуємо відправку повідомлень
-                        teacherIsResponding = false;
-                        messageInput.disabled = false;
-                        sendButton.disabled = false;
-                        messageInput.focus();
-                    })
-                    .catch(error => {
-                        console.error("Помилка при отриманні відповіді:", error);
-
-                        // Видаляємо індикатор набору
-                        removeTypingIndicator();
-
-                        // Показуємо повідомлення про помилку
-                        const isNewSender = (lastSender !== settings.teacherName);
-                        addMessage(settings.teacherName, `На жаль, виникла помилка: ${error.message}. Спробуйте пізніше.`, "teacher", isNewSender);
-                        lastSender = settings.teacherName;
-
-                        // Розблоковуємо відправку повідомлень
-                        teacherIsResponding = false;
-                        messageInput.disabled = false;
-                        sendButton.disabled = false;
-                        messageInput.focus();
-                    });
-            }
-
-            // Функція для додавання повідомлення в чат
-            function addMessage(sender, message, type, isNewSender = true) {
-                const messageContainer = document.createElement('div');
-                messageContainer.className = 'message-container left'; // Завжди відображаємо аватари зліва
-
-                // Створюємо аватар
-                const avatar = document.createElement('img');
-                avatar.className = 'avatar';
-                avatar.src = type === 'teacher' ? settings.teacherAvatar : settings.userAvatar;
-                avatar.alt = sender;
-
-                // Створюємо контейнер для бульбашки
-                const bubbleContainer = document.createElement('div');
-                bubbleContainer.className = `bubble-container ${type}`;
-
-                // Створюємо бульбашку повідомлення
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble';
-
-                // Додаємо ім'я відправника
-                const senderNameElement = document.createElement('div');
-                senderNameElement.className = 'sender-name';
-                senderNameElement.textContent = sender;
-
-                // Додаємо текст повідомлення
-                const messageTextElement = document.createElement('div');
-                messageTextElement.className = 'message-text';
-                messageTextElement.textContent = message;
-
-                // Збираємо все разом
-                bubble.appendChild(senderNameElement);
-                bubble.appendChild(messageTextElement);
-                bubbleContainer.appendChild(bubble);
-
-                // Додаємо елементи в контейнер повідомлення
-                messageContainer.appendChild(avatar);
-                messageContainer.appendChild(bubbleContainer);
-
-                // Додаємо повідомлення до чату
-                chatMessages.appendChild(messageContainer);
-
-                // Прокручуємо чат до останнього повідомлення
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-            }
-
-            // Функція для оновлення імен відправників в повідомленнях
-            function updateMessageNames(oldName, newName) {
-                const senderNames = document.querySelectorAll('.teacher .sender-name');
-                senderNames.forEach(nameElement => {
-                    if (nameElement.textContent === oldName) {
-                        nameElement.textContent = newName;
-                    }
+                nameModal.style.display = 'none';
+            });
+            
+            resetSettingsButton.addEventListener('click', function() {
+                teacherName = "Вчитель";
+                updateTeacherName();
+                dropdownMenu.style.display = 'none';
+            });
+            
+            clearChatButton.addEventListener('click', function() {
+                // Зберігаємо лише перше привітання
+                const firstMessage = chatMessages.querySelector('.message-container');
+                chatMessages.innerHTML = '';
+                if (firstMessage) {
+                    chatMessages.appendChild(firstMessage);
+                }
+                saveChatHistory();
+                dropdownMenu.style.display = 'none';
+            });
+            
+            closeButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.modal').style.display = 'none';
                 });
-            }
-
-            // Функція для показу індикатора набору
-            function showTypingIndicator() {
-                const typingContainer = document.createElement('div');
-                typingContainer.className = 'message-container left typing-indicator-container';
-                typingContainer.id = 'typing-indicator';
-
-                // Створюємо аватар
-                const avatar = document.createElement('img');
-                avatar.className = 'avatar';
-                avatar.src = settings.teacherAvatar;
-                avatar.alt = settings.teacherName;
-
-                // Створюємо контейнер для бульбашки
-                const bubbleContainer = document.createElement('div');
-                bubbleContainer.className = 'bubble-container teacher';
-
-                // Створюємо бульбашку
-                const bubble = document.createElement('div');
-                bubble.className = 'bubble typing-bubble';
-
-                // Додаємо ім'я відправника
-                const senderNameElement = document.createElement('div');
-                senderNameElement.className = 'sender-name';
-                senderNameElement.textContent = settings.teacherName;
-
-                // Створюємо контейнер для крапок
-                const typingText = document.createElement('div');
-                typingText.className = 'message-text';
-                typingText.textContent = 'Друкує';
-
-                const typingDots = document.createElement('div');
-                typingDots.className = 'typing-dots';
-
-                // Додаємо три крапки
-                for (let i = 0; i < 3; i++) {
-                    const dot = document.createElement('div');
-                    dot.className = 'dot';
-                    typingDots.appendChild(dot);
+            });
+            
+            // Закриття модальних вікон при кліку поза межами
+            window.addEventListener('click', function(e) {
+                if (e.target.classList.contains('modal')) {
+                    e.target.style.display = 'none';
                 }
-
-                // Збираємо все разом
-                typingText.appendChild(typingDots);
-                bubble.appendChild(senderNameElement);
-                bubble.appendChild(typingText);
-                bubbleContainer.appendChild(bubble);
-
-                // Додаємо елементи в контейнер
-                typingContainer.appendChild(avatar);
-                typingContainer.appendChild(bubbleContainer);
-
-                // Додаємо індикатор до чату
-                chatMessages.appendChild(typingContainer);
-
-                // Прокручуємо чат до останнього повідомлення
-                chatMessages.scrollTop = chatMessages.scrollHeight;
-
-                // Запускаємо анімацію крапок
-                animateTypingDots();
-            }
-
-            // Функція для видалення індикатора набору
-            function removeTypingIndicator() {
-                const typingIndicator = document.getElementById('typing-indicator');
-                if (typingIndicator) {
-                    typingIndicator.remove();
-                }
-            }
-
-            // Функція для анімації крапок
-            function animateTypingDots() {
-                const typingIndicator = document.getElementById('typing-indicator');
-                if (!typingIndicator) return;
-
-                const dots = typingIndicator.querySelectorAll('.dot');
-                let currentDot = 0;
-
-                // Функція активації однієї крапки
-                function activateDot() {
-                    // Очищаємо всі крапки
-                    dots.forEach(dot => dot.classList.remove('active'));
-
-                    // Активуємо потрібні крапки
-                    for (let i = 0; i <= currentDot; i++) {
-                        dots[i].classList.add('active');
-                    }
-
-                    // Переходимо до наступної крапки або починаємо спочатку
-                    currentDot = (currentDot + 1) % dots.length;
-
-                    // Плануємо наступну анімацію
-                    setTimeout(() => {
-                        // Перевіряємо, чи існує ще індикатор
-                        if (document.getElementById('typing-indicator')) {
-                            activateDot();
-                        }
-                    }, 400);
-                }
-
-                // Запускаємо анімацію
-                activateDot();
-            }
-
-            // Функції для роботи з localStorage
-            function saveSettings() {
-                localStorage.setItem('chatAppSettings', JSON.stringify(settings));
-            }
-
-            function loadSettings() {
-                const savedSettings = localStorage.getItem('chatAppSettings');
-                if (savedSettings) {
-                    const parsedSettings = JSON.parse(savedSettings);
-                    // Зберігаємо лише ім'я вчителя, аватари фіксовані
-                    settings.teacherName = parsedSettings.teacherName || "Вчитель";
-                    teacherHeader.textContent = `${settings.teacherName} AI`;
-                }
-            }
+            });
+            
+            // Ініціалізація додатка
+            init();
         });
     </script>
 </body>
